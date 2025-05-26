@@ -1,7 +1,7 @@
 # Employee Setup CRUD (Laravel + AJAX + DataTables)
 ## 📸 Screenshot
 
-![Website Screenshot](https://github.com/AdilHasanShojib/Portfolio-CRUD/blob/main/portfolio-crud/screenshot/Screenshot.jpg)
+![Website Screenshot](https://github.com/AdilHasanShojib/Crud-Operation-Using-Laravel-AJAX/blob/main/crud/public/ss.jpg)
 
 ## Tech Stack
 
