@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class HRMSEmployeeDetail extends Model
 {
     use HasFactory;
+    protected $table = 'hrms_employee_details';
+
+protected $fillable = [
+    'Employee_UID',
+    'EmployeeName',
+    'FatherName',
+    'MotherName',
+    'DOB',
+    'Gender',
+    'Employee_Type_No_FK',
+    'Designation',
+    'Contact_Number',
+    'Email_Address',
+    'Remarks',
+    'Status'
+];
+
 }
