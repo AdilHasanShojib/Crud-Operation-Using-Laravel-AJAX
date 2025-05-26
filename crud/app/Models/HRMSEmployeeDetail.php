@@ -9,6 +9,9 @@ class HRMSEmployeeDetail extends Model
 {
     use HasFactory;
     protected $table = 'hrms_employee_details';
+    protected $primaryKey = 'Employee_UID';
+    public $incrementing = false; 
+    protected $keyType = 'string'; 
 
 protected $fillable = [
     'Employee_UID',

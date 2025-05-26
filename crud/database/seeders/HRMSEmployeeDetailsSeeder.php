@@ -19,7 +19,7 @@ class HRMSEmployeeDetailsSeeder extends Seeder
                 'MotherName' => 'Mother ' . $i,
                 'DOB' => Carbon::now()->subYears(rand(20, 40))->subDays(rand(0, 365))->format('Y-m-d'),
                 'Gender' => rand(1, 2),
-                'Employee_Type_No_FK' => 1, // make sure this exists in hrms_employee_types table
+                'Employee_Type_No_FK' => 1,
                 'Designation' => 'Designation ' . $i,
                 'Contact_Number' => '012345678' . $i,
                 'Email_Address' => 'employee' . $i . '@example.com',

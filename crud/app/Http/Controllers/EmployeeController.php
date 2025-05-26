@@ -64,9 +64,7 @@ function store(Request $request){
 }
 
 
-
-public function getEmployees()
-{
+ function getEmployees(){
     $employees = HRMSEmployeeDetail::with('employeeType')->get();
 
     $data = [];
@@ -91,15 +89,16 @@ public function getEmployees()
 }
 
 
- function edit($id){
-    $employee = HRMSEmployeeDetail::findOrFail($id);
+function edit($id){
+    $employee = HRMSEmployeeDetail::where('Employee_UID', $id)->firstOrFail();
     return response()->json($employee);
 }
 
 
-public function update(Request $request, $id)
-{
-    $employee = HRMSEmployeeDetail::findOrFail($id);
+
+
+ function update(Request $request, $id){
+    $employee = HRMSEmployeeDetail::where('Employee_UID', $id)->firstOrFail();
 
     $validator = Validator::make($request->all(), [
         'EmployeeName' => 'required|string|max:100',
@@ -110,7 +109,7 @@ public function update(Request $request, $id)
         'Employee_Type_No_FK' => 'required|exists:hrms_employee_types,Employee_Type_No_PK',
         'Designation' => 'required|string|max:100',
         'Contact_Number' => 'required|string|max:20',
-        'Email_Address' => 'required|email|unique:hrms_employee_details,Email_Address,'.$id.',Employee_No_PK',
+        'Email_Address' => 'required|email|unique:hrms_employee_details,Email_Address,' . $employee->Employee_No_PK . ',Employee_No_PK',
         'Status' => 'required|in:0,1',
     ]);
 
@@ -124,21 +123,11 @@ public function update(Request $request, $id)
 }
 
 
-
-
-function destroy($id){
-    HRMSEmployeeDetail::findOrFail($id)->delete();
+ function destroy($id){
+    $employee = HRMSEmployeeDetail::where('Employee_UID', $id)->firstOrFail();
+    $employee->delete();
     return response()->json(['message' => 'Employee deleted successfully!']);
 }
-
-
-
-
-
-
-
-
-
 
 
 
