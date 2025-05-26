@@ -25,4 +25,9 @@ protected $fillable = [
     'Status'
 ];
 
+public function employeeType()
+{
+    return $this->belongsTo(HRMSEmployeeType::class, 'Employee_Type_No_FK', 'Employee_Type_No_PK');
+}
+
 }

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class HRMSEmployeeType extends Model
 {
     use HasFactory;
+     protected $table = 'hrms_employee_types';
 }

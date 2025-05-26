@@ -2,12 +2,16 @@
 <html>
 <head>
     <title>Employee Setup</title>
+
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   
-<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
+    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -16,6 +20,7 @@
 
     <form id="employeeForm">
         <div class="row">
+            <!-- Form Inputs -->
             <div class="col-md-4 mb-3">
                 <label>Employee UID</label>
                 <input type="text" name="Employee_UID" class="form-control" required>
@@ -81,61 +86,31 @@
 
         <button type="submit" class="btn btn-primary">Save Employee</button>
     </form>
-    <hr>
-<h3 class="mt-5 mb-3">Employee List</h3>
-<table id="employeeTable" class="table table-bordered">
-    <thead>
-        <tr>
-            <th>UID</th>
-            <th>Name</th>
-            <th>Designation</th>
-            <th>Type</th>
-            <th>Contact</th>
-            <th>Email</th>
-            <th>DOB</th>
-            <th>Age</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-</table>
 
+    <hr>
+    <h3 class="mt-5 mb-3">Employee List</h3>
+    <table id="employeeTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Type</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>DOB</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('#employeeForm').submit(function(e) {
-    e.preventDefault();
-    let id = $(this).attr('data-id');
-    let url = id ? `/employees/${id}/update` : '{{ route("employees.store") }}';
-
-    $.ajax({
-        url: url,
-        method: 'POST',
-        data: $(this).serialize(),
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            alert(response.message);
-            $('#employeeForm')[0].reset();
-            $('#employeeForm').removeAttr('data-id');
-            $('input[name="Employee_UID"]').prop('readonly', false);
-            $('#employeeTable').DataTable().ajax.reload();
-        },
-        error: function(xhr) {
-            let errors = xhr.responseJSON.errors;
-            let errorMessage = '';
-            for (let field in errors) {
-                errorMessage += errors[field][0] + '\n';
-            }
-            alert(errorMessage);
-        }
-    });
-});
-
-    $(document).ready(function () {
-    $('#employeeTable').DataTable({
+$(document).ready(function () {
+    // Initialize DataTable
+    const employeeTable = $('#employeeTable').DataTable({
         ajax: '{{ route("employees.list") }}',
         columns: [
             { data: 'Employee_UID' },
@@ -148,62 +123,89 @@
             { data: 'Age' },
             { data: 'Status' },
             {
-              data: null,
-              render: function (data, type, row) {
-                  return `
-                      <button class="btn btn-sm btn-info editBtn" data-id="${row.Employee_UID}">Edit</button>
-                      <button class="btn btn-sm btn-danger deleteBtn" data-id="${row.Employee_UID}">Delete</button>
-                       `;
-        }
-    }
+                data: null,
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn btn-sm btn-info editBtn" data-id="${row.Employee_UID}">Edit</button>
+                        <button class="btn btn-sm btn-danger deleteBtn" data-id="${row.Employee_UID}">Delete</button>
+                    `;
+                }
+            }
         ]
     });
-});
 
+    // Handle Form Submission
+    $('#employeeForm').submit(function (e) {
+        e.preventDefault();
+        let id = $(this).attr('data-id');
+        let url = id ? `/employees/${id}/update` : '{{ route("employees.store") }}';
 
-$(document).on('click', '.editBtn', function () {
-    let id = $(this).data('id');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                alert(response.message);
+                $('#employeeForm')[0].reset();
+                $('#employeeForm').removeAttr('data-id');
+                $('input[name="Employee_UID"]').prop('readonly', false);
+                employeeTable.ajax.reload();
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON.errors;
+                let errorMessage = '';
+                for (let field in errors) {
+                    errorMessage += errors[field][0] + '\n';
+                }
+                alert(errorMessage);
+            }
+        });
+    });
 
-    $.get('/employees/' + id + '/edit', function (data) {
-        // Fill form
-        $('input[name="Employee_UID"]').val(data.Employee_UID).prop('readonly', true);
-        $('input[name="EmployeeName"]').val(data.EmployeeName);
-        $('input[name="FatherName"]').val(data.FatherName);
-        $('input[name="MotherName"]').val(data.MotherName);
-        $('input[name="DOB"]').val(data.DOB);
-        $('select[name="Gender"]').val(data.Gender);
-        $('select[name="Employee_Type_No_FK"]').val(data.Employee_Type_No_FK);
-        $('input[name="Designation"]').val(data.Designation);
-        $('input[name="Contact_Number"]').val(data.Contact_Number);
-        $('input[name="Email_Address"]').val(data.Email_Address);
-        $('textarea[name="Remarks"]').val(data.Remarks);
-        $('select[name="Status"]').val(data.Status);
+    // Handle Edit
+    $(document).on('click', '.editBtn', function () {
+        let id = $(this).data('id');
 
-        $('#employeeForm').attr('data-id', id); // Mark form for update
+        $.get('/employees/' + id + '/edit', function (data) {
+            $('input[name="Employee_UID"]').val(data.Employee_UID).prop('readonly', true);
+            $('input[name="EmployeeName"]').val(data.EmployeeName);
+            $('input[name="FatherName"]').val(data.FatherName);
+            $('input[name="MotherName"]').val(data.MotherName);
+            $('input[name="DOB"]').val(data.DOB);
+            $('select[name="Gender"]').val(data.Gender);
+            $('select[name="Employee_Type_No_FK"]').val(data.Employee_Type_No_FK);
+            $('input[name="Designation"]').val(data.Designation);
+            $('input[name="Contact_Number"]').val(data.Contact_Number);
+            $('input[name="Email_Address"]').val(data.Email_Address);
+            $('textarea[name="Remarks"]').val(data.Remarks);
+            $('select[name="Status"]').val(data.Status);
+
+            $('#employeeForm').attr('data-id', id);
+        });
+    });
+
+    // Handle Delete
+    $(document).on('click', '.deleteBtn', function () {
+        if (!confirm('Are you sure to delete this employee?')) return;
+
+        let id = $(this).data('id');
+
+        $.ajax({
+            url: '/employees/' + id + '/delete',
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                alert(response.message);
+                employeeTable.ajax.reload();
+            }
+        });
     });
 });
-
-
-$(document).on('click', '.deleteBtn', function () {
-    if (!confirm('Are you sure to delete this employee?')) return;
-
-    let id = $(this).data('id');
-
-    $.ajax({
-        url: '/employees/' + id + '/delete',
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            alert(response.message);
-            $('#employeeTable').DataTable().ajax.reload();
-        }
-    });
-});
-
-
-
 </script>
 </body>
 </html>
