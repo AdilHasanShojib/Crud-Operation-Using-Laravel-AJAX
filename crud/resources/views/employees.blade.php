@@ -3,6 +3,11 @@
 <head>
     <title>Employee Setup</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -76,6 +81,24 @@
 
         <button type="submit" class="btn btn-primary">Save Employee</button>
     </form>
+    <hr>
+<h3 class="mt-5 mb-3">Employee List</h3>
+<table id="employeeTable" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>UID</th>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Type</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Age</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+</table>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -104,6 +127,24 @@
             }
         });
     });
+
+    $(document).ready(function () {
+    $('#employeeTable').DataTable({
+        ajax: '{{ route("employees.list") }}',
+        columns: [
+            { data: 'Employee_UID' },
+            { data: 'Name' },
+            { data: 'Designation' },
+            { data: 'Employee_Type' },
+            { data: 'Contact' },
+            { data: 'Email' },
+            { data: 'DOB' },
+            { data: 'Age' },
+            { data: 'Status' }
+        ]
+    });
+});
+
 </script>
 </body>
 </html>

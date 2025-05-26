@@ -7,6 +7,8 @@ use App\Models\HRMSEmployeeType;
 use App\Models\HRMSEmployeeDetail;
 use Illuminate\Support\Facades\Validator;
 
+use Carbon\Carbon;
+
 
 class EmployeeController extends Controller
 {
@@ -60,5 +62,46 @@ function store(Request $request){
 
     return response()->json(['message' => 'Employee saved successfully!']);
 }
+
+
+
+public function getEmployees()
+{
+    $employees = HRMSEmployeeDetail::with('employeeType')->get();
+
+    $data = [];
+
+    foreach ($employees as $emp) {
+        $age = Carbon::parse($emp->DOB)->age; // calculate age
+
+        $data[] = [
+            'Employee_UID' => $emp->Employee_UID,
+            'Name' => $emp->EmployeeName,
+            'Designation' => $emp->Designation,
+            'Employee_Type' => $emp->employeeType->Type_Name ?? 'N/A',
+            'Contact' => $emp->Contact_Number,
+            'Email' => $emp->Email_Address,
+            'DOB' => $emp->DOB,
+            'Age' => $age,
+            'Status' => $emp->Status ? 'Active' : 'Inactive',
+        ];
+    }
+
+    return response()->json(['data' => $data]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
