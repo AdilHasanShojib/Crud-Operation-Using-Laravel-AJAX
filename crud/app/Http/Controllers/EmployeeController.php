@@ -91,6 +91,47 @@ public function getEmployees()
 }
 
 
+ function edit($id){
+    $employee = HRMSEmployeeDetail::findOrFail($id);
+    return response()->json($employee);
+}
+
+
+public function update(Request $request, $id)
+{
+    $employee = HRMSEmployeeDetail::findOrFail($id);
+
+    $validator = Validator::make($request->all(), [
+        'EmployeeName' => 'required|string|max:100',
+        'FatherName' => 'required|string|max:100',
+        'MotherName' => 'required|string|max:100',
+        'DOB' => 'required|date',
+        'Gender' => 'required|in:1,2',
+        'Employee_Type_No_FK' => 'required|exists:hrms_employee_types,Employee_Type_No_PK',
+        'Designation' => 'required|string|max:100',
+        'Contact_Number' => 'required|string|max:20',
+        'Email_Address' => 'required|email|unique:hrms_employee_details,Email_Address,'.$id.',Employee_No_PK',
+        'Status' => 'required|in:0,1',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    $employee->update($request->all());
+
+    return response()->json(['message' => 'Employee updated successfully!']);
+}
+
+
+
+
+function destroy($id){
+    HRMSEmployeeDetail::findOrFail($id)->delete();
+    return response()->json(['message' => 'Employee deleted successfully!']);
+}
+
+
 
 
 

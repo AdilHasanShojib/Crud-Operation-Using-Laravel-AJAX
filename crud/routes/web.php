@@ -24,3 +24,9 @@ Route::post('/employees/store', [EmployeeController::class, 'store'])->name('emp
 
 Route::get('/employees/list', [EmployeeController::class, 'getEmployees'])->name('employees.list');
 
+
+Route::get('/employees/{id}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+Route::post('/employees/{id}/update', [EmployeeController::class, 'update'])->name('employees.update');
+Route::delete('/employees/{id}/delete', [EmployeeController::class, 'destroy'])->name('employees.delete');
+
+
